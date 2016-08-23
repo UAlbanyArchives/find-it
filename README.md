@@ -10,7 +10,7 @@ Because the application makes HTTP using Javascript, CORS needs to be implemente
 
 1.  Set up a config file, which should be named `app-config.js` and placed in the `js/` directory. It should look something like this:
 
-        var baseUrl = "http://localhost:4567"; // Base url for your ArchivesSpace instance, including port for backend
+        var baseUrl = "http://localhost:8089"; // Base url for your ArchivesSpace instance, including the backend port number
         var repoId = "2"; // ID for the repo you want to query against
         var token = "81ee42992541795ad7cee5b5701a632fd43a61831b1768cab88e921e3a983e27"; // Non-expiring session token for an AS user
 
