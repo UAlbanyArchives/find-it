@@ -13,13 +13,13 @@ function getResults(data, refid) {
             return (css.match (/(^|\s)alert\S+/g) || []).join(' ');
         });
         var objectURI = results["archival_objects"][0]["ref"];
-        getJson(objectURI);
+        getData(objectURI);
       }
     }
   });
 }
 
-function getJson(uri) {
+function getData(uri) {
   $.ajax({
     type:"GET",
     dataType: "json",
@@ -30,7 +30,7 @@ function getJson(uri) {
         appendData(data, "resource");
       } else {
         appendData(data, "archival_object");
-        getJson(data["resource"]["ref"])
+        getData(data["resource"]["ref"])
       }
     }
   });
@@ -39,19 +39,21 @@ function getJson(uri) {
 function handleInstances(data) {
   var list ='';
   for(i=0; i<data.length; i++) {
-    var container = data[i]["container"];
-    var instanceLength = countInstances(container);
-    var instance = [];
-    for(n=1; n<=instanceLength; n++) {
-      instance.push(capitalize(container["type_"+n])+" "+container["indicator_"+n]);
+    if(data[i]["instance_type"] !== "digital_object") {
+      var container = data[i]["container"];
+      var instanceLength = countInstances(container);
+      var instance = [];
+      for(n=1; n<=instanceLength; n++) {
+        instance.push(capitalize(container["type_"+n])+" "+container["indicator_"+n]);
+      }
+      containerHTML = instance.join(", ")
+      item = "<h4>"+containerHTML+"</h4>"
+      if(container["container_locations"].length > 0) {
+        var location = handleLocations(container["container_locations"]);
+        item = item+location;
+      }
+      list = list+item;
     }
-    containerHTML = instance.join(", ")
-    item = "<h4>"+containerHTML+"</h4>"
-    if(container["container_locations"].length > 0) {
-      var location = handleLocations(container["container_locations"]);
-      item = item+location;
-    }
-    list = list+item;
   }
   $("#results-body").append(list);
 }
