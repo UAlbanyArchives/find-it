@@ -17,27 +17,17 @@ function getResults(data, refid) {
           return (css.match(/(^|\s)alert\S+/g) || []).join(' ');
         });
         var objectURI = results["archival_objects"][0]["ref"];
-        var object = getJson(objectURI);
-        console.log(object)
-        // var resource = getJson(object["resource"]["ref"]);
-        // var instances, agents, subjects
-        // if (object['instances'].length > 0) {
-        //   var instances = handleInstances(object['instances'])
-        // }
-        // if (object['linked_agents'].length > 0) {
-        //   var agents = handleAgents(object["linked_agents"]);
-        // }
-        // if (object["subjects"].length > 0) {
-        //   var subjects = handleSubjects(object["subjects"]);
-        // }
-        // showResults(resource, object, instances, agents, subjects);
+        $("#results-footer").empty();
+        $("#results-title").empty();
+        $("#results-body").empty();
+        getData(objectURI);
       }
     }
   });
 }
 
 // Fetches JSON from an ArchivesSpace URI
-function getJson(uri, token) {
+function getData(uri) {
   $.ajax({
     type: "GET",
     dataType: "json",
@@ -46,10 +36,25 @@ function getJson(uri, token) {
     },
     url: baseUrl + uri,
     success: function(data) {
-      return data;
-      console.log(data)
-    },
-    error: console.log("error")
+      if (data["jsonmodel_type"] == "resource") {
+        displayData("#results-footer", data["title"] + ' (' + data["id_0"] + ')');
+        $("#results").fadeIn(400)
+      } else if (data["jsonmodel_type"] == "archival_object") {
+        displayData('#results-title', '<h2 style="margin-top:10px">' + data['display_string'] + ' <span class="label label-default pull-right">' + data['level'] + '</span></h2>');
+        if (data['instances'].length > 0) {
+          handleInstances(data['instances'])
+        }
+        if (data['linked_agents'].length > 0) {
+          handleAgents(data["linked_agents"]);
+        }
+        if (data["subjects"].length > 0) {
+          handleSubjects(data["subjects"]);
+        }
+        getData(data["resource"]["ref"]);
+      } else if (data["jsonmodel_type"] == "location") {
+        displayData("#results-body", data["title"]);
+      }
+    }
   });
 }
 
@@ -57,41 +62,38 @@ function getJson(uri, token) {
 function handleInstances(data) {
   var list = '';
   for (i = 0; i < data.length; i++) {
-    var container = data[i]["container"];
-    var instanceLength = countInstanceTypes(container);
-    var instance = [];
-    for (n = 1; n <= instanceLength; n++) {
-      instance.push(capitalize(container["type_" + n]) + " " + container["indicator_" + n]);
+    if (data[i]["instance_type"] !== "digital_object") {
+      var container = data[i]["container"];
+      var instanceLength = countInstanceTypes(container);
+      var instance = [];
+      for (n = 1; n <= instanceLength; n++) {
+        instance.push(capitalize(container["type_" + n]) + " " + container["indicator_" + n]);
+      }
+      containerHTML = instance.join(", ")
+      item = "<h4>" + containerHTML + "</h4>"
+      displayData("#results-body", item);
+      if (container["container_locations"]) {
+        handleLocations(container["container_locations"]);
+      }
     }
-    containerHTML = instance.join(", ")
-    item = "<h4>" + containerHTML + "</h4>"
-    if (container["container_locations"].length > 0) {
-      var location = handleLocations(container["container_locations"]);
-      item = item + location;
-    }
-    list = list + item;
   }
-  return list;
 }
 
 // Loops through locations data and constructs HTML for each
 function handleLocations(data) {
-  location = '';
-  for (i = 0; i++; i<data.length) {
-    locationData = getJson(data[i]["ref"]);
-    location = location + '<p>' + locationData["title"] + '</p>';
+  for (l = 0; l < data.length; l++) {
+    getData(data[l]["ref"]);
   }
-  return location;
 }
 
 // Loops through agents and constructs HTML for each
 function handleAgents(data) {
-  return "<span class='label label-default'>Agents go here</span>"
+  displayData("#results-body", "<span class='label label-default'>Agents go here</span>");
 }
 
 // Loops through subjects and constructs HTML for each
 function handleSubjects() {
-  return "<span class='label label-default'>Subjects go here</span>"
+  displayData("#results-body", "<span class='label label-default'>Subjects go here</span>");
 }
 
 // Capitalizes the first letter of a string
@@ -114,16 +116,8 @@ function countInstanceTypes(obj) {
 }
 
 // Adds HTML with results to the page
-function showResults(resource, object, instances, agents, subjects) {
-  $("#results-footer").empty();
-  $("#results-title").empty();
-  $("#results-body").empty();
-  $("#results-footer").append(resource["title"] + ' (' + resource["id_0"] + ')');
-  $("#results-title").append('<h2 style="margin-top:10px">' + object['display_string'] + ' <span class="label label-default pull-right">' + object['level'] + '</span></h2>');
-  $("#results-body").append(instances);
-  $("#results-body").append(agents);
-  $("#results-body").append(subjects);
-  $("#results").fadeIn(400)
+function displayData(target, data) {
+  $(target).append(data);
 }
 
 // Checks ArchivesSpace status
@@ -165,19 +159,37 @@ function checkCredentials() {
 
 // Displays error, warning and success messages to users
 function showFeedback(type, target, message) {
-  $(target).removeClass(function(index, css) {return (css.match(/(^|\s)label-\S+/g) || []).join(' ');});
   if (type == "error") {
-    $(target).addClass("label-danger").text(message).fadeIn(400);
     if (target.match(/(^|\s)#as-\S+/g)) {
+      $(target).removeClass(function(index, css) {
+        return (css.match(/(^|\s)label\S+/g) || []).join(' ');
+      });
+      $(target).addClass("label label-danger").text(message).fadeIn(400);
       $('#refid-search button[type="submit"]').prop("disabled", true);
+    } else {
+      $(target).removeClass(function(index, css) {
+        return (css.match(/(^|\s)alert\S+/g) || []).join(' ');
+      });
+      $(target).addClass("alert alert-danger").text(message).fadeIn(400);
     }
   } else if (type == "success") {
-    $(target).addClass('label-success').text(message).fadeIn(400);
     if (target.match(/(^|\s)#as-\S+/g)) {
+      $(target).removeClass(function(index, css) {
+        return (css.match(/(^|\s)label\S+/g) || []).join(' ');
+      });
+      $(target).addClass('label label-success').text(message).fadeIn(400);
       $("#refid-search button[type='submit']").prop("disabled", false);
-    } else if (type == "warning") {
-      $(target).addClass("label-warning").text("Checking Status").fadeIn(400);
+    } else {
+      $(target).removeClass(function(index, css) {
+        return (css.match(/(^|\s)alert\S+/g) || []).join(' ');
+      });
+      $(target).addClass('alert alert-success').text(message).fadeIn(400);
     }
+  } else if (type == "warning") {
+    $(target).removeClass(function(index, css) {
+      return (css.match(/(^|\s)label\S+/g) || []).join(' ');
+    });
+    $(target).addClass("label label-warning").text("Checking Status").fadeIn(400);
   }
 }
 
