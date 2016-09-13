@@ -4,7 +4,7 @@ A single-page application to fetch information about archival objects in Archive
 
 ## Requirements
 
-Because the application makes HTTP using Javascript, CORS needs to be implemented on your ArchivesSpace instance. You can do this with a plugin. See [as-cors](https://github.com/RockefellerArchiveCenter/as-cors) for an example of how to do this with an ArchivesSpace plugin.
+Because the application makes HTTP using Javascript, CORS needs to be implemented on your ArchivesSpace instance. See [as-cors](https://github.com/RockefellerArchiveCenter/as-cors) for an example of how to do this with an ArchivesSpace plugin.
 
 ## Installation
 
