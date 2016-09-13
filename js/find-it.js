@@ -1,3 +1,5 @@
+var clipboard = new Clipboard('.btn');
+
 // Returns results from ArchivesSpace for a refid search
 function getResults(data, refid) {
   objects = $.ajax({
@@ -16,9 +18,7 @@ function getResults(data, refid) {
           return (css.match(/(^|\s)alert?\S+/g) || []).join(' ');
         });
         var objectURI = results["archival_objects"][0]["ref"];
-        $("#results-footer").empty();
-        $("#results-title").empty();
-        $("#results-body").empty();
+        $("#results-footer, #title, #instance, #location").empty();
         getData(objectURI);
       }
     }
@@ -37,21 +37,16 @@ function getData(uri) {
     success: function(data) {
       if (data["jsonmodel_type"] == "resource") {
         displayData("#results-footer", data["title"] + ' (' + data["id_0"] + ')');
-        $("#results").fadeIn(400)
+        $("#results").fadeIn(200)
       } else if (data["jsonmodel_type"] == "archival_object") {
-        displayData('#results-title', '<h2 style="margin-top:10px">' + data['display_string'] + ' <span class="label label-default pull-right">' + data['level'] + '</span></h2>');
+        displayData('#title', data['display_string'] + ' <span class="label label-default pull-right">' + data['level'] + '</span>');
         if (data['instances'].length > 0) {
           handleInstances(data['instances'])
         }
-        if (data['linked_agents'].length > 0) {
-          handleAgents(data["linked_agents"]);
-        }
-        if (data["subjects"].length > 0) {
-          handleSubjects(data["subjects"]);
-        }
         getData(data["resource"]["ref"]);
       } else if (data["jsonmodel_type"] == "location") {
-        displayData("#results-body", data["title"]);
+        displayData("#location", data["title"]);
+        $("#locationCopy").fadeIn(200);
       }
     }
   });
@@ -68,9 +63,8 @@ function handleInstances(data) {
       for (n = 1; n <= instanceLength; n++) {
         instance.push(capitalize(container["type_" + n]) + " " + container["indicator_" + n]);
       }
-      containerHTML = instance.join(", ")
-      item = "<h4>" + containerHTML + "</h4>"
-      displayData("#results-body", item);
+      completeInstance = instance.join(", ");
+      displayData("#instance", completeInstance);
       if (container["container_locations"]) {
         handleLocations(container["container_locations"]);
       }
@@ -83,16 +77,6 @@ function handleLocations(data) {
   for (l = 0; l < data.length; l++) {
     getData(data[l]["ref"]);
   }
-}
-
-// Loops through agents and constructs HTML for each
-function handleAgents(data) {
-  displayData("#results-body", "<span class='label label-default'>Agents go here</span>");
-}
-
-// Loops through subjects and constructs HTML for each
-function handleSubjects() {
-  displayData("#results-body", "<span class='label label-default'>Subjects go here</span>");
 }
 
 // Capitalizes the first letter of a string
@@ -195,13 +179,14 @@ function showFeedback(type, target, message) {
 // Searches ArchivesSpace for a refid
 $("#refid-search").submit(function(e) {
   e.preventDefault();
-  $("#results").fadeOut(200)
+  $("#results").fadeOut(100);
   var refid = $("#refid-search input[type='text']").val();
   if (refid.length < 1) {
     showFeedback("error", "#refid-search-error", "You didn't enter anything!");
   } else {
     var params = "ref_id[]=" + refid;
-    getResults(params, refid)
+    getResults(params, refid);
+    $("#refid-search input[type='text']").val('');
   }
 });
 

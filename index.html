@@ -33,9 +33,12 @@
             <label class="sr-only" for="exampleInputName2">ArchivesSpace refid</label>
             <input type="text" class="form-control input-lg" id="exampleInputName2" placeholder="Enter an ArchivesSpace refid" style="width:50%;">
             <button type="submit" class="btn btn-primary input-lg" disabled>Find</button>
+            <div class="row">&nbsp;</div>
+            <div class="well">
+              <p><strong>Try one of these ref ids:</strong> ref1043_f6g ref1529_8xz 0c6c91cc9eea80ea2743708fdb1a25c1 ref385_ddf</p>
+            </div>
           </div>
         </form>
-        <div class="help-block">ref1043_f6g ref1529_8xz 0c6c91cc9eea80ea2743708fdb1a25c1 ref385_ddf</div>
       </div>
 
       <div id="refid-search-error" class="text-center col-xs-12" style="margin-top:20px;"></div>
@@ -43,19 +46,29 @@
       <div id="results" class="col-xs-12" style="display:none;">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <div id="results-title" class="panel-title"></div>
+            <div id="results-title" class="panel-title">
+              <h2 id="title" style="margin-top:10px"></h2>
+            </div>
           </div>
-          <div id="results-body" class="panel-body"></div>
+          <div id="results-body" class="panel-body">
+            <h4 id="instance"></h4>
+            <p id="location"></p>
+            <button id="locationCopy" class="btn btn-small" style="display:none" data-clipboard-target="#location">Copy Location</button>
+          </div>
           <div id="results-footer" class="panel-footer"></div>
         </div>
       </div>
+
+
     </div>
     <!-- CDNs should be used for production deployment -->
-    <!-- <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script> -->
+    <!-- <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script> -->
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script> -->
+    <!-- <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.12/clipboard.min.js"></script> -->
     <!-- local copies of scripts for development -->
     <script src="vendor/js/jquery-3.1.0.min.js"></script>
     <script src="vendor/js/bootstrap.min.js"></script>
+    <script src="vendor/js/clipboard.min.js"></script>
     <script src="js/app-config.js"></script>
     <script src="js/find-it.js"></script>
 </body>
