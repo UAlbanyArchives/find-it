@@ -39,7 +39,7 @@ function getData(uri) {
         displayData("#results-footer", data["title"] + ' (' + data["id_0"] + ')');
         $("#results").fadeIn(200)
       } else if (data["jsonmodel_type"] == "archival_object") {
-        displayData('#title', data['display_string'] + ' <span class="label label-default">' + data['level'] + '</span>');
+        displayData('#title', '<a href="http://as.rockarch.org/resolve/readonly?uri=' + data['uri'] + '" target="_blank">' + data['display_string'] + '</a>' + ' <span class="label label-default">' + data['level'] + '</span>');
         if (data['instances'].length > 0) {
           handleInstances(data['instances'])
         }
