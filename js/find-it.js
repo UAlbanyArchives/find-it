@@ -183,8 +183,15 @@ $("#refid-search").submit(function(e) {
   var refid = $("#refid-search input[type='text']").val();
   if (refid.length < 1) {
     showFeedback("error", "#refid-search-error", "You didn't enter anything!");
-  } else {
+  }
+  else {
+    if (refid.startsWith('http')) {
+    var refid = refid.split('#aspace_')[1];
     var params = "ref_id[]=" + refid;
+    }
+    else {
+    var params = "ref_id[]=" + refid;
+    }
     getResults(params, refid);
     $("#refid-search input[type='text']").val('');
   }
