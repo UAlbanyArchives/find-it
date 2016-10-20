@@ -26,7 +26,7 @@ function getResults(data, refid) {
 }
 
 // Fetches JSON from an ArchivesSpace URI
-function getData(uri) {
+function getData(uri, iterator) {
   $.ajax({
     type: "GET",
     dataType: "json",
@@ -45,8 +45,8 @@ function getData(uri) {
         }
         getData(data["resource"]["ref"]);
       } else if (data["jsonmodel_type"] == "location") {
-        displayData("#location", data["title"]);
-        $("#locationCopy").fadeIn(200);
+        displayData("#location"+iterator, data["title"]);
+        displayData("#button"+iterator, '<button id="locationCopy'+iterator+'" class="btn btn-small" data-clipboard-target="#location'+iterator+'">Copy Location</button>');
       }
     }
   });
@@ -57,6 +57,7 @@ function handleInstances(data) {
   var list = '';
   for (i = 0; i < data.length; i++) {
     if (data[i]["instance_type"] !== "digital_object") {
+      $("#instances").append("<div id=instance"+parseInt(i)+"></div>").append("<div id=location"+parseInt(i)+"></div>").append("<div id=button"+parseInt(i)+"></div>");
       var container = data[i]["container"];
       var instanceLength = countInstanceTypes(container);
       var instance = [];
@@ -64,18 +65,18 @@ function handleInstances(data) {
         instance.push(capitalize(container["type_" + n]) + " " + container["indicator_" + n]);
       }
       completeInstance = instance.join(", ");
-      displayData("#instance", completeInstance);
+      displayData("#instance"+i, completeInstance);
       if (container["container_locations"]) {
-        handleLocations(container["container_locations"]);
+        handleLocations(container["container_locations"], i);
       }
     }
   }
 }
 
 // Loops through locations data and constructs HTML for each
-function handleLocations(data) {
+function handleLocations(data, iterator) {
   for (l = 0; l < data.length; l++) {
-    getData(data[l]["ref"]);
+    getData(data[l]["ref"], iterator);
   }
 }
 
