@@ -57,7 +57,7 @@ function handleInstances(data) {
   var list = '';
   for (i = 0; i < data.length; i++) {
     if (data[i]["instance_type"] !== "digital_object") {
-      $("#instances").append("<div id=instance"+parseInt(i)+"></div>").append("<div id=location"+parseInt(i)+"></div>").append("<div id=button"+parseInt(i)+"></div>");
+      $("#instances").append("<h4 id=instance"+parseInt(i)+"/>").append("<p id=location"+parseInt(i)+"/>").append("<div id=button"+parseInt(i)+"/>");
       var container = data[i]["container"];
       var instanceLength = countInstanceTypes(container);
       var instance = [];
