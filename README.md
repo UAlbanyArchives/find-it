@@ -18,7 +18,7 @@ To get a non-expiring session token, use a `expiring=false` parameter when makin
 
 ## Usage
 
-Open up `index.html`, drop a refid for an ArchivesSpace archival object into the search box, click "find" or hit enter, and watch the magic happen!
+Open up `index.html`, drop a refid for an ArchivesSpace archival object or the full DIMES url for the object you'd like into the search box, click "find" or hit enter, and watch the magic happen!
 
 If `Find It!` has trouble connecting to ArchivesSpace or logging you in, those errors will be displayed in the top right hand corner of the page.
 
