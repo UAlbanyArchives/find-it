@@ -10,6 +10,11 @@
   <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous"> -->
   <!-- local copy of CSS for development -->
   <link href="vendor/css/bootstrap.min.css" rel="stylesheet">
+  <style type="text/css">
+  .details {
+    display: none;
+  }
+</style>
 </head>
 
 <body>
@@ -24,6 +29,24 @@
           <br/>
           <label>Account</label>
           <span id="as-login-status" class="label label-warning"></span>
+          <br/>
+          <button type="button" class="btn btn-primary input-sm" data-toggle="modal" data-target="#help">Help</button>
+          <div id="help" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header text-center">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h2 class="modal-title">Help</h2>
+                </div>
+                <div class="modal-body text-left">
+                  <p>This application accepts either ArchivesSpace ref ids or full DIMES urls. Any other input text will create an error.</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
