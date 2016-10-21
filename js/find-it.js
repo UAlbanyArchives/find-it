@@ -18,7 +18,7 @@ function getResults(data, refid) {
           return (css.match(/(^|\s)alert?\S+/g) || []).join(' ');
         });
         var objectURI = results["archival_objects"][0]["ref"];
-        $("#results-footer, #title, #instances, #location").empty();
+        $("#results-footer, #title, #instance, #location").empty();
         getData(objectURI);
       }
     }
@@ -39,7 +39,9 @@ function getData(uri, iterator) {
         displayData("#results-footer", data["title"] + ' (' + data["id_0"] + ')');
         $("#results").fadeIn(200)
       } else if (data["jsonmodel_type"] == "archival_object") {
-        displayData('#title', '<a href="http://as.rockarch.org/resolve/readonly?uri=' + data['uri'] + '" target="_blank">' + data['display_string'] + '</a>' + ' <span class="label label-default">' + data['level'] + '</span>');
+        var aoURI = data['uri'].split('/archival_objects/')[1];
+        var resourceID = data['resource']['ref'].split('/resources/')[1];
+        displayData('#title', '<a href="http://as.rockarch.org/resources/' + resourceID + '#tree::archival_object_' + aoURI + '" target="_blank">' + data['display_string'] + '</a>' + ' <span class="label label-default">' + data['level'] + '</span>');
         if (data['instances'].length > 0) {
           handleInstances(data['instances'])
         }
