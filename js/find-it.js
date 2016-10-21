@@ -18,7 +18,7 @@ function getResults(data, refid) {
           return (css.match(/(^|\s)alert?\S+/g) || []).join(' ');
         });
         var objectURI = results["archival_objects"][0]["ref"];
-        $("#results-footer, #title, #instance, #location").empty();
+        $("#results-footer, #title, #instances, #location").empty();
         getData(objectURI);
       }
     }
