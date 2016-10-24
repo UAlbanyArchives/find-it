@@ -68,8 +68,11 @@ function handleInstances(data) {
       }
       completeInstance = instance.join(", ");
       displayData("#instance"+i, completeInstance);
-      if (container["container_locations"]) {
+      if (container["container_locations"].length >= 1) {
         handleLocations(container["container_locations"], i);
+      }
+      else if (container["container_locations"].length < 1){
+        displayData("#location"+i, "No location found");
       }
     }
   }
