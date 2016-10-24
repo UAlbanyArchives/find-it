@@ -72,7 +72,6 @@ function handleInstances(data) {
         handleLocations(container["container_locations"], i);
       }
       else if (container["container_locations"].length < 1){
-        console.log('this ran');
         displayData("#location"+i, "No location found");
       }
     }
