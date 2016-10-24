@@ -73,7 +73,7 @@ function handleInstances(data) {
       }
       else if (container["container_locations"].length < 1){
         console.log('this ran');
-        displayData("#location"+i, "No location");
+        displayData("#location"+i, "No location found");
       }
     }
   }
