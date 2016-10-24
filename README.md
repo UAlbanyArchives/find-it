@@ -30,6 +30,8 @@ Pull requests accepted!
 
 Hillel Arnold
 
+Patrick Galligan
+
 ## License
 
 Code is released under an MIT License. See `LICENSE.md` for more information.
