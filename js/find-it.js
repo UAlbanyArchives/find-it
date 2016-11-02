@@ -44,6 +44,8 @@ function getData(uri, iterator) {
         displayData('#title', '<a href="http://as.rockarch.org/resources/' + resourceID + '#tree::archival_object_' + aoURI + '" target="_blank">' + data['display_string'] + '</a>' + ' <span class="label label-default">' + data['level'] + '</span>');
         if (data['instances'].length > 0) {
           handleInstances(data['instances'])
+        } else {
+          displayData("This archival object has no instances", "#instances")
         }
         getData(data["resource"]["ref"]);
       } else if (data["jsonmodel_type"] == "location") {
