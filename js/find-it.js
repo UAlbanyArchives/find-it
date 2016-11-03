@@ -17,16 +17,30 @@ function getResults(data, refid) {
         $("#refid-search-error").empty().removeClass(function(index, css) {
           return (css.match(/(^|\s)alert?\S+/g) || []).join(' ');
         });
-        var objectURI = results["archival_objects"][0]["ref"];
-        $("#results-footer, #title, #instances, #location").empty();
-        getData(objectURI);
+        $("#results").empty();
+        for(i=0; i<results["archival_objects"].length; i++) {
+          var objectURI = results["archival_objects"][i]["ref"];
+          $("#results").append('<div id="'+i+'" class="panel panel-default">'+
+            '<div class="panel-heading">'+
+              '<div class="panel-title">'+
+                '<h2 class="title" style="margin-top:10px"></h2>'+
+              '</div>'+
+            '</div>'+
+            '<div class="panel-body">'+
+              '<div class="instances">'+
+              '</div>'+
+            '</div>'+
+            '<div class="panel-footer"></div>'+
+          '</div>');
+          getData(objectURI, i);
+        }
       }
     }
   });
 }
 
 // Fetches JSON from an ArchivesSpace URI
-function getData(uri, iterator) {
+function getData(uri, parent_selector, iterator) {
   $.ajax({
     type: "GET",
     dataType: "json",
@@ -36,32 +50,32 @@ function getData(uri, iterator) {
     url: baseUrl + uri,
     success: function(data) {
       if (data["jsonmodel_type"] == "resource") {
-        displayData("#results-footer", data["title"] + ' (' + data["id_0"] + ')');
+        displayData("#"+parent_selector+" .panel-footer", data["title"] + ' (' + data["id_0"] + ')');
         $("#results").fadeIn(200)
       } else if (data["jsonmodel_type"] == "archival_object") {
-        var aoURI = data['uri'].split('/archival_objects/')[1];
+        var aoID = data['uri'].split('/archival_objects/')[1];
         var resourceID = data['resource']['ref'].split('/resources/')[1];
-        displayData('#title', '<a href="http://as.rockarch.org/resources/' + resourceID + '#tree::archival_object_' + aoURI + '" target="_blank">' + data['display_string'] + '</a>' + ' <span class="label label-default">' + data['level'] + '</span>');
+        displayData('#'+parent_selector+' .title', '<a href="http://as.rockarch.org/resources/' + resourceID + '#tree::archival_object_' + aoID + '" target="_blank">' + data['display_string'] + '</a>' + ' <small><span style="vertical-align:text-top" class="label label-default">' + data['level'] + '</span></small>');
         if (data['instances'].length > 0) {
-          handleInstances(data['instances'])
+          handleInstances(data['instances'], parent_selector)
         } else {
-          displayData("This archival object has no instances", "#instances")
+          displayData("#"+parent_selector+" .instances", "This archival object has no instances")
         }
-        getData(data["resource"]["ref"]);
+        getData(data["resource"]["ref"], parent_selector);
       } else if (data["jsonmodel_type"] == "location") {
-        displayData("#location"+iterator, data["title"]);
-        displayData("#button"+iterator, '<button id="locationCopy'+iterator+'" class="btn btn-small" data-clipboard-target="#location'+iterator+'">Copy Location</button>');
+        displayData("#location_"+parent_selector+"_"+iterator, data["title"]);
+        displayData("#"+parent_selector+" .button"+iterator, '<button id="locationCopy'+iterator+'" class="btn btn-small" data-clipboard-target="#location_'+parent_selector+"_"+iterator+'">Copy Location</button>');
       }
     }
   });
 }
 
 // Loops through instance data and constructs HTML for each
-function handleInstances(data) {
+function handleInstances(data, parent_selector) {
   var list = '';
   for (i = 0; i < data.length; i++) {
     if (data[i]["instance_type"] !== "digital_object") {
-      $("#instances").append("<h4 id=instance"+parseInt(i)+"/>").append("<p id=location"+parseInt(i)+"/>").append("<div id=button"+parseInt(i)+"/>");
+      $("#"+parent_selector+" .instances").append("<h4 class=instance"+parseInt(i)+"/><p id=location_"+parent_selector+"_"+parseInt(i)+"/><div class=button"+parseInt(i)+"/>");
       var container = data[i]["container"];
       var instanceLength = countInstanceTypes(container);
       var instance = [];
@@ -69,21 +83,21 @@ function handleInstances(data) {
         instance.push(capitalize(container["type_" + n]) + " " + container["indicator_" + n]);
       }
       completeInstance = instance.join(", ");
-      displayData("#instance"+i, completeInstance);
+      displayData("#"+parent_selector+" .instance"+i, completeInstance);
       if (container["container_locations"].length >= 1) {
-        handleLocations(container["container_locations"], i);
+        handleLocations(container["container_locations"], parent_selector, i);
       }
       else if (container["container_locations"].length < 1){
-        displayData("#location"+i, "No location found");
+        displayData("#"+parent_selector+" .location"+i, "No location found");
       }
     }
   }
 }
 
 // Loops through locations data and constructs HTML for each
-function handleLocations(data, iterator) {
+function handleLocations(data, parent_selector, iterator) {
   for (l = 0; l < data.length; l++) {
-    getData(data[l]["ref"], iterator);
+    getData(data[l]["ref"], parent_selector, iterator);
   }
 }
 
