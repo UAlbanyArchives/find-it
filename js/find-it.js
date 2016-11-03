@@ -88,7 +88,7 @@ function handleInstances(data, parent_selector) {
         handleLocations(container["container_locations"], parent_selector, i);
       }
       else if (container["container_locations"].length < 1){
-        displayData("#"+parent_selector+" .location"+i, "No location found");
+        displayData("#location_"+parent_selector+"_"+i, "No location found");
       }
     }
   }
