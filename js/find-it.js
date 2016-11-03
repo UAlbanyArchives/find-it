@@ -63,8 +63,8 @@ function getData(uri, parent_selector, iterator) {
         }
         getData(data["resource"]["ref"], parent_selector);
       } else if (data["jsonmodel_type"] == "location") {
-        displayData("#"+parent_selector+" .location"+iterator, data["title"]);
-        displayData("#"+parent_selector+" .button"+iterator, '<button id="locationCopy'+iterator+'" class="btn btn-small" data-clipboard-target=".location'+iterator+'">Copy Location</button>');
+        displayData("#location_"+parent_selector+"_"+iterator, data["title"]);
+        displayData("#"+parent_selector+" .button"+iterator, '<button id="locationCopy'+iterator+'" class="btn btn-small" data-clipboard-target="#location_'+parent_selector+"_"+iterator+'">Copy Location</button>');
       }
     }
   });
@@ -75,7 +75,7 @@ function handleInstances(data, parent_selector) {
   var list = '';
   for (i = 0; i < data.length; i++) {
     if (data[i]["instance_type"] !== "digital_object") {
-      $("#"+parent_selector+" .instances").append("<h4 class=instance"+parseInt(i)+"/><p class=location"+parseInt(i)+"/><div class=button"+parseInt(i)+"/>");
+      $("#"+parent_selector+" .instances").append("<h4 class=instance"+parseInt(i)+"/><p id=location_"+parent_selector+"_"+parseInt(i)+"/><div class=button"+parseInt(i)+"/>");
       var container = data[i]["container"];
       var instanceLength = countInstanceTypes(container);
       var instance = [];
