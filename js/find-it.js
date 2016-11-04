@@ -208,7 +208,7 @@ $("#refid-search").submit(function(e) {
   }
   else {
     if (refid.startsWith('http')) {
-    var refid = refid.split('#aspace_')[1];
+    var refid = refid.split('#')[1];
     var params = "ref_id[]=" + refid;
     }
     else {
