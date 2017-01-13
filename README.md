@@ -6,6 +6,14 @@ A single-page application to fetch information about archival objects in Archive
 
 Because the application makes HTTP using Javascript, CORS needs to be implemented on your ArchivesSpace instance. See [as-cors](https://github.com/RockefellerArchiveCenter/as-cors) for an example of how to do this with an ArchivesSpace plugin.
 
+The following routes need to have CORS requesting enabled:
+
+        /version
+        /users/current-user
+        /repositories/:repo_id/find_by_id/archival_objects
+        /repositories/:repo_id/archival_objects/:id
+        /repositories/:repo_id/resources/:id'
+
 ## Installation
 
 1.  Set up a config file, which should be named `app-config.js` and placed in the `js/` directory. It should look something like this:
