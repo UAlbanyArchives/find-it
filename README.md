@@ -16,6 +16,11 @@ Because the application makes HTTP using Javascript, CORS needs to be implemente
 
 To get a non-expiring session token, use a `expiring=false` parameter when making an [ArchivesSpace authentication request](http://archivesspace.github.io/archivesspace/api/#authentication).
 
+Optionally, you can add two variables corresponding to refids that have been replaced as well as the new values. These lists (which should be JSON arrays) must be in the same order. This is useful if you have recently replaced refids in ArchivesSpace and outdated values persist in other data sources. In the example below, if you searched for a component with a refid of `456`, Find It! would perform a secondary search for a components with a refid of `second`:
+
+        var replacedIds = ["123", "456", "789"] // an array of refids that used to exist in the system but have have been replaced
+        var replacedWithIds = ["first", "second", "third"] // an array of refids that replaced the other refids.
+
 ## Usage
 
 Open up `index.html`, drop a refid for an ArchivesSpace archival object or the full DIMES url for the object you'd like into the search box, click "find" or hit enter, and watch the magic happen!
