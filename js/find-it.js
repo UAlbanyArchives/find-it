@@ -12,7 +12,13 @@ function getResults(data, refid) {
     data: data,
     success: function(results) {
       if (results["archival_objects"].length < 1) {
-        showFeedback("error", "#refid-search-error", "Sorry, I couldn't find anything for " + refid);
+        var index = $.inArray(refid, replacedIds);
+        if (index > -1) {
+          showFeedback("error", "#refid-search-error", "I couldn't find anything for " + refid +", trying a secondary lookup for " +replacedWithIds[index]);
+          getResults("ref_id[]=" + replacedWithIds[index], replacedWithIds[index]);
+        } else {
+          showFeedback("error", "#refid-search-error", "Sorry, I couldn't find anything for " + refid);
+        }
       } else {
         $("#refid-search-error").empty().removeClass(function(index, css) {
           return (css.match(/(^|\s)alert?\S+/g) || []).join(' ');
