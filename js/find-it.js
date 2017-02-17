@@ -12,13 +12,46 @@ function getResults(data, refid) {
     data: data,
     success: function(results) {
       if (results["archival_objects"].length < 1) {
-        var index = $.inArray(refid, replacedIds);
-        if (index > -1) {
-          showFeedback("error", "#refid-search-error", "I couldn't find anything for " + refid +", trying a secondary lookup for " +replacedWithIds[index]);
-          getResults("ref_id[]=" + replacedWithIds[index], replacedWithIds[index]);
-        } else {
-          showFeedback("error", "#refid-search-error", "Sorry, I couldn't find anything for " + refid);
+        showFeedback("error", "#refid-search-error", "Sorry, I couldn't find anything for " + refid);
+      } else {
+        $("#refid-search-error").empty().removeClass(function(index, css) {
+          return (css.match(/(^|\s)alert?\S+/g) || []).join(' ');
+        });
+        $("#results").empty();
+        for(i=0; i<results["archival_objects"].length; i++) {
+          var objectURI = results["archival_objects"][i]["ref"];
+          $("#results").append('<div id="'+i+'" class="panel panel-default">'+
+            '<div class="panel-heading">'+
+              '<div class="panel-title">'+
+                '<h2 class="title" style="margin-top:10px"></h2>'+
+              '</div>'+
+            '</div>'+
+            '<div class="panel-body">'+
+              '<div class="instances">'+
+              '</div>'+
+            '</div>'+
+            '<div class="panel-footer"></div>'+
+          '</div>');
+          getData(objectURI, i);
         }
+      }
+    }
+  });
+}
+
+// Returns results from ArchivesSpace for a Resource id_0 search
+function getResourceResults(data, resourceid) {
+  objects = $.ajax({
+    type: "GET",
+    dataType: "json",
+    beforeSend: function(request) {
+      request.setRequestHeader("X-ArchivesSpace-Session", token);
+    },
+    url: baseUrl + "/repositories/" + repoId + "/search",
+	data: data,
+    success: function(results) {
+      if (results["archival_objects"].length < 1) {
+        showFeedback("error", "#refid-search-error", "Sorry, I couldn't find anything for " + resourceid);
       } else {
         $("#refid-search-error").empty().removeClass(function(index, css) {
           return (css.match(/(^|\s)alert?\S+/g) || []).join(' ');
@@ -61,7 +94,7 @@ function getData(uri, parent_selector, iterator) {
       } else if (data["jsonmodel_type"] == "archival_object") {
         var aoID = data['uri'].split('/archival_objects/')[1];
         var resourceID = data['resource']['ref'].split('/resources/')[1];
-        displayData('#'+parent_selector+' .title', '<a href="http://as.rockarch.org/resources/' + resourceID + '#tree::archival_object_' + aoID + '" target="_blank">' + data['display_string'] + '</a>' + ' <small><span style="vertical-align:text-top" class="label label-default">' + data['level'] + '</span></small>');
+        displayData('#'+parent_selector+' .title', '<a href="http://169.226.92.25:8080/resources/' + resourceID + '#tree::archival_object_' + aoID + '" target="_blank">' + data['display_string'] + '</a>' + ' <small><span style="vertical-align:text-top" class="label label-default">' + data['level'] + '</span></small>');
         if (data['instances'].length > 0) {
           handleInstances(data['instances'], parent_selector)
         } else {
@@ -177,6 +210,7 @@ function showFeedback(type, target, message) {
       });
       $(target).addClass("label-danger").text(message).fadeIn(400);
       $('#refid-search button[type="submit"]').prop("disabled", true);
+      $('#resourceid_0-search button[type="submit"]').prop("disabled", true);
     } else {
       $(target).removeClass(function(index, css) {
         return (css.match(/(^|\s)alert\S+/g) || []).join(' ');
@@ -190,6 +224,7 @@ function showFeedback(type, target, message) {
       });
       $(target).addClass('label-success').text(message).fadeIn(400);
       $("#refid-search button[type='submit']").prop("disabled", false);
+      $("#resourceid_0-search button[type='submit']").prop("disabled", false);
     } else {
       $(target).removeClass(function(index, css) {
         return (css.match(/(^|\s)alert\S+/g) || []).join(' ');
@@ -214,14 +249,29 @@ $("#refid-search").submit(function(e) {
   }
   else {
     if (refid.startsWith('http')) {
-    var refid = refid.split('#')[1];
-    var params = "ref_id[]=" + refid;
+		var refid = refid.split('#')[1];
+		var params = "ref_id[]=" + refid;
     }
     else {
     var params = "ref_id[]=" + refid;
     }
     getResults(params, refid);
     $("#refid-search input[type='text']").val('');
+  }
+});
+
+// Searches ArchivesSpace for a resource id_0
+$("#resourceid_0-search").submit(function(e) {
+  e.preventDefault();
+  $("#results").fadeOut(100);
+  var resourceid = $("#resourceid_0-search input[type='text']").val();
+  if (resourceid.length < 1) {
+    showFeedback("error", "#refid-search-error", "You didn't enter anything!");
+  }
+  else {
+    var params = "page1&aq={\"query\":{\"field\":\"identifier\", \"value\":\"" + resourceid + "\", \"jsonmodel_type\":\"field_query\"}}"; 
+    getResourceResults(params, resourceid);
+    $("#resourceid_0-search input[type='text']").val('');
   }
 });
 
