@@ -45,25 +45,17 @@
         </div>
       </div>
 
-      <div class="col-xs-7">
+      <div class="col-xs-12">
         <form id="refid-search" class="form-inline">
           <div class="form-group col-xs-12">
             <label class="sr-only" for="exampleInputName2">ArchivesSpace refid</label>
-            <input type="text" class="form-control input-lg" id="exampleInputName2" placeholder="Enter an ArchivesSpace refid" style="width:85%;">
+            <input type="text" class="form-control input-lg" id="exampleInputName2" placeholder="Enter an ArchivesSpace refid, collection ID, or search string" style="width:85%;">
             <button type="submit" class="btn btn-primary input-lg" onclick="ga('send', 'event', 'search', 'click', 'button');" disabled>Find</button>
           </div>
         </form>
       </div>
 	  
-	  <div class="col-xs-5">
-        <form id="resourceid_0-search" class="form-inline">
-          <div class="form-group col-xs-12">
-            <label class="sr-only" for="exampleInputName2">ArchivesSpace Resource id_0</label>
-            <input type="text" class="form-control input-lg" id="exampleInputName2" placeholder="Enter Resource id_0" style="width:80%;">
-            <button type="submit" class="btn btn-primary input-lg" onclick="ga('send', 'event', 'search', 'click', 'button');" disabled>Find</button>
-          </div>
-        </form>
-      </div>
+
 
       <div id="refid-search-error" class="text-center col-xs-12" style="margin-top:20px;"></div>
 

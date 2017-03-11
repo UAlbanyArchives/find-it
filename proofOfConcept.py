@@ -22,7 +22,7 @@ def getSession():
 		
 session = getSession()
 
-query = "nam_apap101"
+query = "apap110"
 
 response = requests.get("http://localhost:8089/repositories/2/search?page=1&aq={\"query\":{\"field\":\"identifier\", \"value\":\"" + query + "\", \"jsonmodel_type\":\"field_query\"}}",  headers=session)
 print response
