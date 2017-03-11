@@ -1,7 +1,11 @@
 var clipboard = new Clipboard('.btn');
 
-function hasWhiteSpace(s) {
-  return s.indexOf(' ') >= 0;
+window.onload= function() { 
+	if (window.location.hash) {
+		refid = window.location.hash.substring(1); 
+		data = "ref_id[]=" + refid
+		getResults(data, refid)
+	}
 }
 
 // Returns results from ArchivesSpace for a refid search
