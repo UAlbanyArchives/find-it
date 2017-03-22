@@ -41,6 +41,7 @@ function getResults(data, refid) {
 				  '<div class="panel-title">'+
 					'<h2 class="title" style="margin-top:10px"></h2>'+
 				  '</div>'+
+				  '<div style="clear:both"/>'+
 				'</div>'+
 				'<div class="panel-body">'+
 				  '<div class="instances">'+
@@ -67,6 +68,7 @@ function getResults(data, refid) {
 				  '<div class="panel-title">'+
 					'<h2 class="title" style="margin-top:10px"></h2>'+
 				  '</div>'+
+				   '<div style="clear:both"/>'+
 				'</div>'+
 				'<div class="panel-body">'+
 				  '<div class="instances">'+
@@ -107,6 +109,7 @@ function getResourceResults(data, resourceid) {
               '<div class="panel-title">'+
                 '<h2 class="title" style="margin-top:10px"></h2>'+
               '</div>'+
+			   '<div style="clear:both"/>'+
             '</div>'+
             '<div class="panel-body">'+
               '<div class="instances">'+
