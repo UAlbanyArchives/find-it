@@ -27,7 +27,6 @@ function getResults(data, refid) {
     data: data,
     success: function(results) {
 	  if (results.hasOwnProperty('results')) {
-		  console.log(results);
 		  if (Number(results["total_hits"]) < 1) {
 			showFeedback("error", "#refid-search-error", "Sorry, I couldn't find anything for " + refid);
 		  } else {
@@ -132,17 +131,17 @@ function getData(uri, parent_selector, collectionSwitch, iterator) {
     },
     url: baseUrl + uri,
     success: function(data) {
-		console.log(data);
       if (data["jsonmodel_type"] == "resource") {
 		if (collectionSwitch == true) {
 		 var resourceID = data['uri'].split('/resources/')[1];
-		displayData('#'+parent_selector+' .title', '<a href="http://169.226.92.25:8080/resources/' + resourceID + '#" target="_blank">' + data['title'] + '</a>' + ' <small><span style="vertical-align:text-top" class="label label-default">' + data['level'] + '</span></small><a href="http://meg.library.albany.edu:8080/archive/view?docId=' + data["id_0"] + '.xml" class="btn btn-success pull-right" target="_blank">XTF</a>');
+		displayData('#'+parent_selector+' .title', '<a href="http://169.226.92.25:8080/resources/' + resourceID + '#" target="_blank">' + data['title'] + '</a> <small><span style="vertical-align:text-top" class="label label-info" data-toggle="tooltip" data-placement="top" title="collection">' + data["id_0"] + '</span></small> <!--<small><span style="vertical-align:text-top" class="label label-default">' + data['level'] + '</span></small>--><a href="http://meg.library.albany.edu:8080/archive/view?docId=' + data["id_0"] + '.xml" class="btn btn-success pull-right" target="_blank">XTF</a>');
 			if (data['instances'].length > 0) {
 			  handleInstances(data['instances'], parent_selector)
 			} else {
 			  displayData("#"+parent_selector+" .instances", "This resource has no instances")
 			}
-        } else {
+			$('[data-toggle="tooltip"]').tooltip()
+		} else {
 			displayData("#"+parent_selector+" .panel-footer", '<a href="http://169.226.92.25:8080/resources/' + data['uri'].split('/resources/')[1] + '#" target="_blank">' + data['title'] + '</a> (' + data["id_0"] + ')<a href="http://meg.library.albany.edu:8080/archive/view?docId=' + data["id_0"] + '.xml" class="btn btn-success btn-xs pull-right" target="_blank">XTF</a>');
 		}
 		$("#results").fadeIn(200)
