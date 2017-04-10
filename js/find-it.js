@@ -134,6 +134,28 @@ function getData(uri, parent_selector, collectionSwitch, iterator) {
     },
     url: baseUrl + uri,
     success: function(data) {
+	  if (data["jsonmodel_type"] !== "location") {
+		  //add and if here to see if restrictions
+		  restrictCount = 0
+		  for (i = 0; i < data["notes"].length; i++) {
+				if (data["notes"][i]["type"] == "accessrestrict") {
+					var restriction = data["notes"][i]["subnotes"][0]["content"];
+					if (restriction !== "Access to this record group is unrestricted.") {
+						restrictCount = restrictCount + 1
+						if (restriction.indexOf("because it is unprocessed") >= 0) {
+							displayData("#"+parent_selector+" .instances", "<div class='alert alert-warning'><strong>Unprocessed</strong> " + restriction + "</div>")
+						} else {
+							displayData("#"+parent_selector+" .instances", "<div class='alert alert-danger'><strong>Restricted</strong> " + restriction + "</div>")
+						}
+					}
+				}
+		  }
+		  if (restrictCount == 0) {
+			  if (data["restrictions"] == true) {
+				  displayData("#"+parent_selector+" .instances", "<div class='alert alert-danger'><strong>Restrictions</strong></div>")
+			  }
+		  }
+	  }
       if (data["jsonmodel_type"] == "resource") {
 		if (collectionSwitch == true) {
 		 var resourceID = data['uri'].split('/resources/')[1];
@@ -141,9 +163,11 @@ function getData(uri, parent_selector, collectionSwitch, iterator) {
 			if (data['instances'].length > 0) {
 			  handleInstances(data['instances'], parent_selector)
 			} else {
-			  displayData("#"+parent_selector+" .instances", "This resource has no instances")
+			  displayData("#"+parent_selector+" .instances", "This resource has no instances <img style='width:100px;' class='loadGIF' src='img/Loading_icon.gif'/>")
+			  getChildren(parent_selector, data['uri'], "")
 			}
 			$('[data-toggle="tooltip"]').tooltip()
+			displayData("#"+parent_selector+" .panel-footer", '<h4 style="margin:0px">' + data['extents'][0]['number'] + ' ' + data['extents'][0]['extent_type'] + '</h4>');
 		} else {
 			displayData("#"+parent_selector+" .panel-footer", '<a href="http://169.226.92.25:8080/resources/' + data['uri'].split('/resources/')[1] + '#" target="_blank">' + data['title'] + '</a> (' + data["id_0"] + ')<a href="http://meg.library.albany.edu:8080/archive/view?docId=' + data["id_0"] + '.xml" class="btn btn-success btn-xs pull-right" target="_blank">XTF</a>');
 		}
@@ -155,11 +179,12 @@ function getData(uri, parent_selector, collectionSwitch, iterator) {
         if (data['instances'].length > 0) {
           handleInstances(data['instances'], parent_selector)
         } else {
-          displayData("#"+parent_selector+" .instances", "This archival object has no instances")
+          displayData("#"+parent_selector+" .instances", "This archival object has no instances <img style='width:100px;' class='loadGIF' src='img/Loading_icon.gif'/>")
+		  getChildren(parent_selector, data['resource']['ref'], data['uri'])
         }
         getData(data["resource"]["ref"], parent_selector, collectionSwitch);
       } else if (data["jsonmodel_type"] == "location") {
-        displayData("#location_"+parent_selector+"_"+iterator, "<p>" + data["title"] + "</p>");
+        displayData("#location_"+parent_selector+"_"+iterator, "<p>" + data["title"] + "</p>"); //<----HERE
         /*displayData("#"+parent_selector+" .button"+iterator, '<button id="locationCopy'+iterator+'" class="btn btn-small" data-clipboard-target="#location_'+parent_selector+"_"+iterator+'">Copy Location</button>');*/
       }
     }
@@ -171,6 +196,7 @@ function handleInstances(data, parent_selector) {
   var list = '';
   for (i = 0; i < data.length; i++) {
     if (data[i]["instance_type"] !== "digital_object") {
+		console.log(data[i]['sub_container']['top_container']['ref']);
       $("#"+parent_selector+" .instances").append("<h4 class=instance"+parseInt(i)+"/><p id=location_"+parent_selector+"_"+parseInt(i)+"/><div class=button"+parseInt(i)+"/>");
       var container = data[i]["container"];
       var instanceLength = countInstanceTypes(container);
@@ -189,6 +215,82 @@ function handleInstances(data, parent_selector) {
     }
   }
 }
+
+//if no instances, gets links to child objects
+function getChildren(parent_selector, uri, childURI) {
+	 $.ajax({
+		type: "GET",
+		dataType: "json",
+		beforeSend: function(request) {
+		  request.setRequestHeader("X-ArchivesSpace-Session", token);
+		},
+		url: baseUrl + uri + '/tree',
+		success: function(data) {
+			if (childURI.length > 0){
+				match = findMatch(data, childURI)
+				for (i = 0; i < match["children"].length; i++) {
+					var uriAO = match["children"][i]["record_uri"]
+					$.ajax({
+						type: "GET",
+						dataType: "json",
+						beforeSend: function(request) {
+						  request.setRequestHeader("X-ArchivesSpace-Session", token);
+						},
+						url: baseUrl + uriAO,
+						success: function(data) {
+						displayData("#"+parent_selector+" .instances", "<p style='margin-top:15px;'><span class='glyphicon glyphicon-arrow-right' style='margin-left:20px;'></span> <a href='//libstaff/find-it#" + data["ref_id"] + "'>" + data["title"] + "</a></p>")
+					}
+				  });
+				}
+				$("#"+parent_selector+" .instances").children("img").remove(); 
+			} else {
+				for (i = 0; i < data["children"].length; i++) {
+					var uriAO = data["children"][i]["record_uri"]
+					$.ajax({
+						type: "GET",
+						dataType: "json",
+						beforeSend: function(request) {
+						  request.setRequestHeader("X-ArchivesSpace-Session", token);
+						},
+						url: baseUrl + uriAO,
+						success: function(data) {
+						displayData("#"+parent_selector+" .instances", "<p style='margin-top:15px;'><span class='glyphicon glyphicon-arrow-right' style='margin-left:20px;'></span> <a href='//libstaff/find-it#" + data["ref_id"] + "'>" + data["title"] + "</a></p>")
+					}
+				  });
+				}
+				$("#"+parent_selector+" .instances").children("img").remove(); 
+			}
+    }
+  });
+}
+
+// Recursive loop though tree to find matching archival object
+//help from http://stackoverflow.com/questions/22222599/javascript-recursive-search-in-json-object
+function findMatch(node, childURI) {
+    var i,
+        currentChild,
+        result;
+
+    if (childURI == node["record_uri"]) {
+        return node;
+    } else {
+        for (i = 0; i < node["children"].length; i += 1) {
+            currentChild = node["children"][i];
+
+            // Search in the current child
+            result = findMatch(currentChild, childURI);
+
+            // Return the result if the node has been found
+            if (result !== false) {
+                return result;
+            }
+        }
+
+        return false;
+    }
+}
+
+
 
 // Loops through locations data and constructs HTML for each
 function handleLocations(data, parent_selector, iterator) {
