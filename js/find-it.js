@@ -159,7 +159,7 @@ function getData(uri, parent_selector, collectionSwitch, iterator) {
       if (data["jsonmodel_type"] == "resource") {
 		if (collectionSwitch == true) {
 		 var resourceID = data['uri'].split('/resources/')[1];
-		displayData('#'+parent_selector+' .title', '<a href="http://169.226.92.25:8080/resources/' + resourceID + '#" target="_blank">' + data['title'] + '</a> <small><span style="vertical-align:text-top" class="label label-info" data-toggle="tooltip" data-placement="top" title="collection">' + data["id_0"] + '</span></small> <!--<small><span style="vertical-align:text-top" class="label label-default">' + data['level'] + '</span></small>--><a href="http://meg.library.albany.edu:8080/archive/view?docId=' + data["id_0"] + '.xml" class="btn btn-success pull-right" target="_blank">XTF</a>');
+		displayData('#'+parent_selector+' .title', '<a href="http://169.226.92.25:8080/resources/' + resourceID + '#">' + data['title'] + '</a> <small><span style="vertical-align:text-top" class="label label-info" data-toggle="tooltip" data-placement="top" title="collection">' + data["id_0"] + '</span></small> <!--<small><span style="vertical-align:text-top" class="label label-default">' + data['level'] + '</span></small>--><a href="http://meg.library.albany.edu:8080/archive/view?docId=' + data["id_0"] + '.xml" class="btn btn-success pull-right">XTF</a>');
 			if (data['instances'].length > 0) {
 			  handleInstances(data['instances'], parent_selector)
 			} else {
@@ -169,13 +169,13 @@ function getData(uri, parent_selector, collectionSwitch, iterator) {
 			$('[data-toggle="tooltip"]').tooltip()
 			displayData("#"+parent_selector+" .panel-footer", '<h4 style="margin:0px">' + data['extents'][0]['number'] + ' ' + data['extents'][0]['extent_type'] + '</h4>');
 		} else {
-			displayData("#"+parent_selector+" .panel-footer", '<a href="http://169.226.92.25:8080/resources/' + data['uri'].split('/resources/')[1] + '#" target="_blank">' + data['title'] + '</a> (' + data["id_0"] + ')<a href="http://meg.library.albany.edu:8080/archive/view?docId=' + data["id_0"] + '.xml" class="btn btn-success btn-xs pull-right" target="_blank">XTF</a>');
+			displayData("#"+parent_selector+" .panel-footer", '<a href="http://169.226.92.25:8080/resources/' + data['uri'].split('/resources/')[1] + '#" >' + data['title'] + '</a> (' + data["id_0"] + ')<a href="http://meg.library.albany.edu:8080/archive/view?docId=' + data["id_0"] + '.xml" class="btn btn-success btn-xs pull-right">XTF</a>');
 		}
 		$("#results").fadeIn(200)
       } else if (data["jsonmodel_type"] == "archival_object") {
         var aoID = data['uri'].split('/archival_objects/')[1];
         var resourceID = data['resource']['ref'].split('/resources/')[1];
-        displayData('#'+parent_selector+' .title', '<a href="http://169.226.92.25:8080/resources/' + resourceID + '#tree::archival_object_' + aoID + '" target="_blank">' + data['display_string'] + '</a>' + ' <small><span style="vertical-align:text-top" class="label label-default">' + data['level'] + '</span></small>');
+        displayData('#'+parent_selector+' .title', '<a href="http://169.226.92.25:8080/resources/' + resourceID + '#tree::archival_object_' + aoID + '">' + data['display_string'] + '</a>' + ' <small><span style="vertical-align:text-top" class="label label-default">' + data['level'] + '</span></small>');
         if (data['instances'].length > 0) {
           handleInstances(data['instances'], parent_selector)
         } else {

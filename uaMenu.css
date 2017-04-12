@@ -28,7 +28,7 @@
 		 margin-bottom: 15px;
 	}
 	.nav li a {
-		padding: 14px 13px;
+		padding: 14px 13px !important;
 		background-color:#512D6D !important;
 		color:#EBE6F0 !important;
 		font: 11pt "Roboto", Helvetica, Arial, sans-serif;

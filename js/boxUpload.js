@@ -91,82 +91,89 @@ $(document).ready(function(){
 
 // Searches ArchivesSpace for a refid
 $("#boxUpload").submit(function(e) {
-	e.preventDefault();
-	$('.inputGlyph').each(function (i) {
-		$(this).removeClass("glyphicon-ok")
-		$(this).removeClass("glyphicon-remove")
-		$(this).removeClass("form-control-feedback")
-	});
-	$('.has-success').each(function (i) {
-		$(this).removeClass("has-success")
-	});
-	$('.has-error').each(function (i) {
-		$(this).removeClass("has-error")
-	});
-	var $button = $("#boxUpload").find(".btn-success")
-	var $input = $("#boxUpload").find("input")
-	$button.prop("disabled", true);
-	$button.find("span").removeClass("glyphicon-arrow-up");
-	$button.find("span").removeClass("glyphicon");
-	$button.find("span").append("<img src='img/btn-loader.gif'/>")
-	var refid = $("#boxUpload").find("input[type='text']").val();
-	if (refid.length > 0) {
-		$.ajax({
-			type: "GET",
-			dataType: "json",
-			async: false,
-			beforeSend: function(request) {
-			  request.setRequestHeader("X-ArchivesSpace-Session", token);
-			},
-			url: baseUrl + '/repositories/' + repoId + "/search?page=1&aq={\"query\":{\"field\":\"identifier\", \"value\":\"" + refid + "\", \"jsonmodel_type\":\"field_query\"}}",
-			success: function(data) {
-				if (data["results"].length > 0) {
-					var resource = data["results"][0]
-					$input.parent(".form-group").addClass("has-success");
-					$input.addClass("form-control-success");
-					$input.parent(".form-group").find(".inputGlyph").addClass("glyphicon-ok form-control-feedback");
-					$('#boxEntry').children('.boxRow').each(function (i) {
-						boxCheck = validateBoxType($(this).find(".boxType"))
-						if (boxCheck== true) {
-							try {
-								if ($(this).find(".indicator").val().indexOf("-") > 0) {
-									var range=$(this).find(".indicator").val().split('-');
-									var endRange = +range[1] + 1;
-									for (i=range[0]; i<endRange; i++) {
-										locationTitle = translateLocation($(this).find(".location"))
-										makeBox($(this).find(".boxType").val(), i.toString(), locationTitle, resource["uri"], $(this).find(".checkbox-inline").is(':checked'), $(this).find(".indicator"), $(this).find(".location"))
-									}
-								} else {
-									locationTitle = translateLocation($(this).find(".location"))
-									makeBox($(this).find(".boxType").val(), $(this).find(".indicator").val(), locationTitle, resource["uri"], $(this).find(".checkbox-inline").is(':checked'), $(this).find(".indicator"), $(this).find(".location"))
-								}
-							} catch(err) {
-								alert(err);
-								$(this).find(".indicator").parent(".col-xs-4").addClass("has-error");
-								$(this).find(".indicator").parent(".col-xs-4").find(".inputGlyph").addClass("glyphicon-remove form-control-feedback");
-								$(this).find(".indicator").addClass("form-control-error");
-								$(this).find(".location").parent(".col-xs-4").addClass("has-error");
-								$(this).find(".location").parent(".col-xs-4").find(".inputGlyph").addClass("glyphicon-remove form-control-feedback");
-								$(this).find(".location").addClass("form-control-error");
-							}
-						}
-					});						
-				} else {
-					$input.parent(".form-group").addClass("has-error");
-					$input.parent(".form-group").find(".inputGlyph").addClass("glyphicon-remove form-control-feedback");
-					$input.addClass("form-control-error");
-				}				
-		}
-	  });
+	var $key = $("#key")
+	if ($key.val() != "spe") {
+		$key.parent(".form-group").addClass("has-error")
+		$key.parent(".form-group").find(".inputGlyph").addClass("glyphicon-remove form-control-feedback");
+		$key.addClass("form-control-error");
 	} else {
-		$input.parent(".form-group").addClass("has-error");
-		$input.parent(".form-group").find(".inputGlyph").addClass("glyphicon-remove form-control-feedback");
-		$input.addClass("form-control-error");
+		e.preventDefault();
+		$('.inputGlyph').each(function (i) {
+			$(this).removeClass("glyphicon-ok")
+			$(this).removeClass("glyphicon-remove")
+			$(this).removeClass("form-control-feedback")
+		});
+		$('.has-success').each(function (i) {
+			$(this).removeClass("has-success")
+		});
+		$('.has-error').each(function (i) {
+			$(this).removeClass("has-error")
+		});
+		var $button = $("#boxUpload").find(".btn-success")
+		var $input = $("#boxUpload").find("input")
+		$button.prop("disabled", true);
+		$button.find("span").removeClass("glyphicon-arrow-up");
+		$button.find("span").removeClass("glyphicon");
+		$button.find("span").append("<img src='img/btn-loader.gif'/>")
+		var refid = $("#boxUpload").find("input[type='text']").val();
+		if (refid.length > 0) {
+			$.ajax({
+				type: "GET",
+				dataType: "json",
+				async: false,
+				beforeSend: function(request) {
+				  request.setRequestHeader("X-ArchivesSpace-Session", token);
+				},
+				url: baseUrl + '/repositories/' + repoId + "/search?page=1&aq={\"query\":{\"field\":\"identifier\", \"value\":\"" + refid + "\", \"jsonmodel_type\":\"field_query\"}}",
+				success: function(data) {
+					if (data["results"].length > 0) {
+						var resource = data["results"][0]
+						$input.parent(".form-group").addClass("has-success");
+						$input.addClass("form-control-success");
+						$input.parent(".form-group").find(".inputGlyph").addClass("glyphicon-ok form-control-feedback");
+						$('#boxEntry').children('.boxRow').each(function (i) {
+							boxCheck = validateBoxType($(this).find(".boxType"))
+							if (boxCheck== true) {
+								try {
+									if ($(this).find(".indicator").val().indexOf("-") > 0) {
+										var range=$(this).find(".indicator").val().split('-');
+										var endRange = +range[1] + 1;
+										for (i=range[0]; i<endRange; i++) {
+											locationTitle = translateLocation($(this).find(".location"))
+											makeBox($(this).find(".boxType").val(), i.toString(), locationTitle, resource["uri"], $(this).find(".checkbox-inline").is(':checked'), $(this).find(".indicator"), $(this).find(".location"))
+										}
+									} else {
+										locationTitle = translateLocation($(this).find(".location"))
+										makeBox($(this).find(".boxType").val(), $(this).find(".indicator").val(), locationTitle, resource["uri"], $(this).find(".checkbox-inline").is(':checked'), $(this).find(".indicator"), $(this).find(".location"))
+									}
+								} catch(err) {
+									alert(err);
+									$(this).find(".indicator").parent(".col-xs-4").addClass("has-error");
+									$(this).find(".indicator").parent(".col-xs-4").find(".inputGlyph").addClass("glyphicon-remove form-control-feedback");
+									$(this).find(".indicator").addClass("form-control-error");
+									$(this).find(".location").parent(".col-xs-4").addClass("has-error");
+									$(this).find(".location").parent(".col-xs-4").find(".inputGlyph").addClass("glyphicon-remove form-control-feedback");
+									$(this).find(".location").addClass("form-control-error");
+								}
+							}
+						});						
+					} else {
+						$input.parent(".form-group").addClass("has-error");
+						$input.parent(".form-group").find(".inputGlyph").addClass("glyphicon-remove form-control-feedback");
+						$input.addClass("form-control-error");
+					}				
+			}
+		  });
+		} else {
+			$input.parent(".form-group").addClass("has-error");
+			$input.parent(".form-group").find(".inputGlyph").addClass("glyphicon-remove form-control-feedback");
+			$input.addClass("form-control-error");
+		}
+		$button.find("span").empty();
+		$button.find("span").addClass("glyphicon");
+		$button.find("span").addClass("glyphicon-arrow-up");
+		$button.removeAttr("disabled");
 	}
-	$button.find("span").empty();
-	$button.find("span").addClass("glyphicon");
-	$button.find("span").addClass("glyphicon-arrow-up");
-	$button.removeAttr("disabled");
 });
 
 
