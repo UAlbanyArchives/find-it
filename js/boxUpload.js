@@ -265,7 +265,7 @@ function translateLocation(locationInput) {
 		}		
 	} else if (mainStacks.indexOf(location[0]) >= 0) {
 		if (location.length == 4) {
-			return "Science Library, 3, Main Storage, " + location[0] + " [Row: " +location[1] + ", Bay: " + location[2] + ", Shelf: " +location[3] + "]"
+			return "Science Library, 3, Main Storage, " + location[0] + " [Row: " + location[1] + ", Bay: " + location[2] + ", Shelf: " +location[3] + "]"
 		} else {
 			locationInput.parent(".col-xs-4").addClass("has-error");
 			locationInput.parent(".col-xs-4").find(".inputGlyph").addClass("glyphicon-remove form-control-feedback");
