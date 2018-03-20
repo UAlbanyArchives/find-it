@@ -67,3 +67,7 @@
 		line-height: 40px;
 		text-decoration: none;
 	}
+	.panel-body {
+		max-height: 300px;
+		overflow-y: scroll;
+	}
